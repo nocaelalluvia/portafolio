@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VANITY — nocaelalluvia</title>
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --surface: #F5F5F5;
+      --ink: #0A0A0A;
+      --muted: #737373;
+      --border: #E5E5E5;
+      --font-helvetica: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-helvetica);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    
+    /* NAVEGACIÓN SUPERIOR */
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 50;
+      padding: 1.2rem 2rem;
+    }
+    .nav-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .back-btn { transition: color 0.2s ease; }
+    .back-btn:hover { color: var(--muted); }
+
+    /* CABECERA DEL PROYECTO */
+    .project-hero {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 5rem 2rem 3rem;
+    }
+    .project-tag {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--bg);
+      background: var(--ink);
+      display: inline-block;
+      padding: 0.35rem 0.8rem;
+      margin-bottom: 2rem;
+      font-weight: 700;
+    }
+    .project-title {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+    }
+    
+    /* ESPECIFICACIONES TÉCNICAS */
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .spec-item span {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.25rem;
+    }
+
+    /* REPRODUCTOR DE VIDEO */
+    .video-container {
+      max-width: 1440px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+    }
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%; /* Relación 16:9 */
+      height: 0;
+      background: #000;
+    }
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* GALERÍA DE FOTOGRAMAS (STILLS) */
+    .stills-container {
+      max-width: 1440px;
+      margin: 0 auto 6rem;
+      padding: 0 2rem;
+    }
+    .stills-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .stills-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+    .still-img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: var(--surface);
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .stills-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .project-hero, .video-container, .stills-container { padding-left: 1.25rem; padding-right: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="nav-inner">
+      <a href="index.html" class="back-btn">← Volver al Archivo</a>
+      <span class="logo-helvetica" style="font-weight:700; letter-spacing:-0.04em;">nocaelalluvia</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="project-hero">
+      <div class="project-tag">Selección Oficial Bogoshorts</div>
+      <h1 class="project-title">VANITY</h1>
+      
+      <div class="specs-grid">
+        <div class="spec-item">
+          <span>Rol</span>
+          <strong>Dirección de Fotografía</strong>
+        </div>
+        <div class="spec-item">
+          <span>Dirección</span>
+          <strong>Nombre del Director(a)</strong>
+        </div>
+        <div class="spec-item">
+          <span>Cámara</span>
+          <strong>Sony FX3 (Ejemplo)</strong>
+        </div>
+        <div class="spec-item">
+          <span>Lentes</span>
+          <strong>Zeiss CP.2 (Ejemplo)</strong>
+        </div>
+        <div class="spec-item">
+          <span>Formato</span>
+          <strong>16:9 / 4K</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Acá pones el ID de tu video en YouTube -->
+    <section class="video-container">
+      <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/AQUI_TU_ID_DE_VIDEO?rel=0" allowfullscreen></iframe>
+      </div>
+    </section>
+
+    <section class="stills-container">
+      <h2 class="stills-title">Fotogramas (Stills)</h2>
+      <div class="stills-grid">
+        <!-- Reemplaza los src por las rutas de tus imágenes exportadas -->
+        <img src="img/vanity-still-01.jpg" class="still-img" alt="Frame 1" onerror="this.src='https://placehold.co/1920x1080/F5F5F5/999999?text=Frame+01'">
+        <img src="img/vanity-still-02.jpg" class="still-img" alt="Frame 2" onerror="this.src='https://placehold.co/1920x1080/F5F5F5/999999?text=Frame+02'">
+        <img src="img/vanity-still-03.jpg" class="still-img" alt="Frame 3" onerror="this.src='https://placehold.co/1920x1080/F5F5F5/999999?text=Frame+03'">
+        <img src="img/vanity-still-04.jpg" class="still-img" alt="Frame 4" onerror="this.src='https://placehold.co/1920x1080/F5F5F5/999999?text=Frame+04'">
+        <img src="img/vanity-still-05.jpg" class="still-img" alt="Frame 5" onerror="this.src='https://placehold.co/1920x1080/F5F5F5/999999?text=Frame+05'">
+        <img src="img/vanity-still-06.jpg" class="still-img" alt="Frame 6" onerror="this.src='https://placehold.co/1920x1080/F5F5F5/999999?text=Frame+06'">
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>
