@@ -568,7 +568,15 @@
     }
     .modal-backdrop.open { display: flex; animation: mIn 0.35s ease; }
     @keyframes mIn { from { opacity: 0; } to { opacity: 1; } }
-    html.modal-open { overflow: hidden; }
+    /* visor del CV: se ve dentro de la página; descargar es opcional (ícono) */
+    .cv-viewer { position: fixed; inset: 0; z-index: 2600; background: var(--bg); display: none; flex-direction: column; }
+    .cv-viewer.open { display: flex; animation: mIn 0.35s ease; }
+    .cv-bar { flex: none; display: flex; justify-content: flex-end; align-items: center; gap: 0.25rem; padding: max(0.5rem, env(safe-area-inset-top)) 0.75rem 0.25rem; color: var(--viewer-ink); }
+    .cv-bar a, .cv-bar button { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; color: var(--viewer-ink); font-size: 1.3rem; line-height: 1; transition: opacity 0.2s ease; }
+    .cv-bar a:hover, .cv-bar button:hover { opacity: 0.55; }
+    .cv-scroll { flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 0 0 max(1rem, env(safe-area-inset-bottom)); }
+    .cv-scroll img { display: block; width: min(100%, 880px); height: auto; margin: 0 auto; background: #fff; box-shadow: 0 1px 14px rgba(14, 52, 200, 0.12); }
+    @media (min-width: 900px) { .cv-scroll { padding: 0 1rem 2rem; } }    html.modal-open { overflow: hidden; }
     .modal-topbar { width: 100%; max-width: 1120px; display: flex; justify-content: space-between; align-items: center; color: var(--viewer-ink); margin-bottom: 1rem; font-size: 0.82rem; gap: 1rem; }
     .modal-meta-info span { color: var(--viewer-mute); margin-left: 0.75rem; }
     .modal-actions { display: flex; align-items: center; gap: 1.25rem; }
@@ -806,7 +814,7 @@
     <a href="tel:+573145501754" class="cat-dropdown-link">314 550 1754</a>
     <a href="https://wa.me/573145501754" target="_blank" rel="noopener" class="cat-dropdown-link">WhatsApp</a>
     <a href="https://www.instagram.com/nocaelalluvia/" target="_blank" rel="noopener" class="cat-dropdown-link">Instagram</a>
-    <a href="curriculum/juan-camilo-bastidas-cv.pdf" target="_blank" rel="noopener" class="cat-dropdown-link">CV</a>
+    <a href="curriculum/juan-camilo-bastidas-cv.pdf" data-cv class="cat-dropdown-link">CV</a>
   </nav>
 
   <!-- PORTADA: VANITY -->
@@ -1502,7 +1510,7 @@
 
       <div class="foot-mail">
         <a href="mailto:camilobastidasfilmmaker@gmail.com" class="footer-email" id="footer-email-link">camilobastidasfilmmaker@gmail.com</a>
-        <p class="foot-contact"><a href="tel:+573145501754">314 550 1754</a><a href="https://wa.me/573145501754" target="_blank" rel="noopener">WhatsApp</a><a href="curriculum/juan-camilo-bastidas-cv.pdf" target="_blank" rel="noopener">CV</a></p>
+        <p class="foot-contact"><a href="tel:+573145501754">314 550 1754</a><a href="https://wa.me/573145501754" target="_blank" rel="noopener">WhatsApp</a><a href="curriculum/juan-camilo-bastidas-cv.pdf" data-cv>CV</a></p>
         <span class="email-copied-hint" id="email-copied-hint" aria-live="polite">Correo copiado</span>
       </div>
 
@@ -1514,6 +1522,14 @@
     </div>
   </footer>
 
+  <!-- VISOR DEL CV -->
+  <div class="cv-viewer" id="cv-viewer" role="dialog" aria-modal="true" aria-label="CV">
+    <div class="cv-bar">
+      <a href="curriculum/juan-camilo-bastidas-cv.pdf" download="CV Juan Camilo Cardona Bastidas.pdf" aria-label="Descargar CV"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/></svg></a>
+      <button type="button" id="cv-close" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="cv-scroll" id="cv-scroll"><img src="curriculum/juan-camilo-bastidas-cv.jpg" alt="CV de Juan Camilo Cardona Bastidas" width="1588" height="2246"></div>
+  </div>
   <!-- VISOR MODAL -->
   <div class="modal-backdrop" id="media-modal" role="dialog" aria-modal="true" aria-label="Visor">
     <div class="modal-topbar">
@@ -2217,6 +2233,16 @@
     }, { passive: true });
     modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
 
+    /* ---------- CV dentro de la página (no se descarga solo) ---------- */
+    (function () {
+      var v = $('#cv-viewer'), x = $('#cv-close');
+      function open() { setPanel(false); v.classList.add('open'); html.classList.add('modal-open'); $('#cv-scroll').scrollTop = 0; x.focus({ preventScroll: true }); }
+      function close() { v.classList.remove('open'); html.classList.remove('modal-open'); }
+      $$('a[data-cv]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); open(); }); });
+      x.addEventListener('click', close);
+      v.addEventListener('click', function (e) { if (e.target === v || e.target === $('#cv-scroll')) close(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && v.classList.contains('open')) close(); });
+    })();
     /* ---------- 8 · Copiar correo con un clic ---------- */
     [['#footer-email-link', '#email-copied-hint'], ['#menu-email-link', '#menu-copied-hint']].forEach(function (pair) {
       var mail = $(pair[0]), hint = $(pair[1]);
@@ -2232,4 +2258,5 @@
   </script>
 </body>
 </html>
+
 
