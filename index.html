@@ -529,6 +529,12 @@
     .email-copied-hint.visible { opacity: 1; }
 
     .foot-mail { margin-top: 1.4rem; }
+    .foot-mail { position: relative; }
+    .foot-mail .email-copied-hint { position: absolute; left: 0; top: -1.3rem; margin: 0; }
+    .foot-contact { display: flex; flex-wrap: wrap; gap: 0.5rem 1.8rem; margin-top: 1rem; }
+    .foot-contact a { position: relative; display: inline-block; font-size: clamp(0.84rem, 3.4vw, 1.3rem); font-weight: 400; letter-spacing: -0.025em; white-space: nowrap; border-bottom: 1px solid currentColor; padding-bottom: 0.15rem; transition: opacity 0.2s ease; }
+    .foot-contact a:hover { opacity: 0.55; }
+    .foot-contact a::before { content: ""; position: absolute; inset: -14px -8px; }
     .foot-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 2.5rem; max-width: 760px; margin-top: 3.5rem; }
     .foot-col h3 { font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sala-mute); margin-bottom: 0.9rem; }
     .foot-col a { display: block; width: fit-content; max-width: 100%; font-size: 0.92rem; line-height: 1.35; padding: 0.32rem 0; color: var(--sala-ink); transition: opacity 0.2s ease; }
@@ -1476,6 +1482,7 @@
 
       <div class="foot-mail">
         <a href="mailto:camilobastidasfilmmaker@gmail.com" class="footer-email" id="footer-email-link">camilobastidasfilmmaker@gmail.com</a>
+        <p class="foot-contact"><a href="tel:+573145501754">314 550 1754</a><a href="https://wa.me/573145501754" target="_blank" rel="noopener">WhatsApp</a></p>
         <span class="email-copied-hint" id="email-copied-hint" aria-live="polite">Correo copiado</span>
       </div>
 
