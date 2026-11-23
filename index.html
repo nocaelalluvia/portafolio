@@ -716,6 +716,11 @@
     .beauty-stage .bs-title, #domino .hs-title { position: static; order: -1; width: auto; height: auto; margin: 0 2rem 0.6rem; padding: 0; overflow: visible; clip: auto; white-space: normal; font-family: var(--font-mono); font-size: 0.62rem; font-weight: 400; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
     #domino .hs-title { margin-bottom: 0.7rem; padding: 0 2rem; }
     @media (max-width: 768px) { .beauty-stage .bs-title { margin-left: 1.25rem; margin-right: 1.25rem; } #domino .hs-title { padding: 0 1.25rem; } }
+    /* IMANES (asistencia al soltar el gesto): tarjetas de una en una, página que se acomoda al inicio de cada categoría (suave: "proximity"), galería que se ajusta (JS) */
+    html { scroll-snap-type: y proximity; scroll-padding-top: var(--header-h, 58px); }
+    html.no-snap, html.modal-open, html.menu-open, html.is-loading { scroll-snap-type: none; }
+    .interlude { scroll-snap-align: start; }
+    .b-tile, .hs-i { scroll-snap-stop: always; }
     /* Áreas táctiles ≥ 44 px en móvil (sin cambiar el diseño: los enlaces pequeños amplían su zona de toque con un pseudo-elemento) */
     @media (max-width: 768px), (pointer: coarse) {
       .foot-col a { min-height: 44px; display: flex; align-items: center; padding: 0; }
@@ -1609,10 +1614,13 @@
     var hdr = $('#main-header'), lastY = window.scrollY;
     function showHdr() { hdr.classList.remove('is-hidden'); html.style.removeProperty('--sticky-top'); }
     function hideHdr() { hdr.classList.add('is-hidden'); html.style.setProperty('--sticky-top', '0px'); }
+    // el encabezado solo reacciona al scroll que hace la persona: los ajustes del imán y las animaciones no lo muestran/ocultan
+    var lastInput = 0; ['wheel', 'touchstart', 'touchmove', 'keydown', 'pointerdown'].forEach(function (ev) { window.addEventListener(ev, function () { lastInput = performance.now(); }, { passive: true }); });
     function hdrScroll() {
       var y = window.scrollY, d = y - lastY;
       if (catPanel.classList.contains('open') || y <= 120) { if (hdr.classList.contains('is-hidden')) showHdr(); lastY = y; return; }
       if (Math.abs(d) < 8) return;
+      if (performance.now() - lastInput > 160 && Math.abs(d) < 140) { lastY = y; return; }   // ajuste automático (imán): no cambia el encabezado
       if (d > 0) hideHdr(); else showHdr();
       lastY = y;
     }
@@ -1814,6 +1822,20 @@
           }
         }
       }
+      // imán: al soltar (sin dedos) y tras un instante, la vista se acomoda sola
+      var snapTimer = null;
+      function galSnap() {
+        if (pinch || drag || ids().length) return;
+        if (G.s < 1.25) { if (G.s !== 1) { G.s = 1; galApply(true); } return; }
+        if (G.cw * G.s < G.W * 0.42) return;   // aún hay varias fotos a la vista: se deja libre
+        if (G.cw * G.s > G.W * 0.98 || G.ch * G.s > G.H * 0.98) return;   // la foto ya llena la pantalla: está mirando detalles, no se mueve
+        var cxw = (G.W / 2 - G.tx) / G.s, cyw = (G.H / 2 - G.ty) / G.s, best = null, bd = 1e9;
+        galFrames.forEach(function (f) { var dx = f._x + G.cw / 2 - cxw, dy = f._y + G.ch / 2 - cyw, d = dx * dx + dy * dy; if (d < bd) { bd = d; best = f; } });
+        if (best) { G.tx = G.W / 2 - (best._x + G.cw / 2) * G.s; G.ty = G.H / 2 - (best._y + G.ch / 2) * G.s; galApply(true); }
+      }
+      function galSnapSoon() { clearTimeout(snapTimer); snapTimer = setTimeout(galSnap, 140); }
+      window.addEventListener('pointerup', function () { galSnapSoon(); }); window.addEventListener('pointercancel', function () { galSnapSoon(); });
+      galWorld.addEventListener('wheel', galSnapSoon, { passive: true });
       window.addEventListener('pointerup', end); window.addEventListener('pointercancel', end);
       // rueda: Ctrl/⌘ + rueda (o pellizco del trackpad) acerca; ya acercado, la rueda acerca/aleja sin mover la página
       galWorld.addEventListener('wheel', function (e) {
@@ -1888,12 +1910,12 @@
       var start = window.scrollY, dist = y - start;
       if (Math.abs(dist) < 2) return;
       dur = dur || clamp(Math.abs(dist) / 7, 450, 1000);
-      html.style.scrollBehavior = 'auto';
+      html.style.scrollBehavior = 'auto'; html.classList.add('no-snap');
       var t0 = performance.now();
       (function step(now) {
         var t = clamp((now - t0) / dur, 0, 1), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
         window.scrollTo(0, start + dist * e);
-        if (t < 1) requestAnimationFrame(step); else html.style.scrollBehavior = '';
+        if (t < 1) requestAnimationFrame(step); else { html.style.scrollBehavior = ''; setTimeout(function () { html.classList.remove('no-snap'); }, 60); }
       })(t0);
     }
     document.addEventListener('click', function (e) {
@@ -1903,7 +1925,7 @@
       if (!el) return;
       e.preventDefault();
       var tgt = a.getAttribute('href') === '#portada' ? null : (el.previousElementSibling && el.previousElementSibling.classList.contains('interlude') ? el.previousElementSibling : el);
-      fastScrollTo(tgt ? Math.max(0, tgt.getBoundingClientRect().top + window.scrollY) : 0);
+      fastScrollTo(tgt ? Math.max(0, tgt.getBoundingClientRect().top + window.scrollY - (parseFloat(getComputedStyle(html).getPropertyValue('--header-h')) || 58)) : 0);
     });
 
     var ticking = false;
