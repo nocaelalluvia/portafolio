@@ -459,32 +459,28 @@
           (sin clics: el mismo gesto de bajar recorre las fotos). Alternativa ?beauty=muro
     ========================================================= */
     .beauty-section { border-bottom: 1px solid var(--border); }
-    .beauty-track { position: relative; height: 420vh; }
-    .beauty-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
-    .bs-title {
-      position: absolute; left: 2rem; top: calc(var(--header-h) + 1.1rem); z-index: 5;
-      font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); pointer-events: none;
-    }
-    .beauty-strip { position: absolute; left: 0; top: 0; display: flex; will-change: transform; }
-    .b-tile { position: relative; flex: 0 0 auto; background: #e9e6df; overflow: hidden; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-    .b-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease-snap); }
+    /* Tiras de reels = carrusel horizontal INDEPENDIENTE del scroll vertical (desliza con el dedo / arrastra con el mouse); solo una línea de avance abajo */
+    .beauty-track { position: relative; }
+    .beauty-stage { position: relative; display: flex; flex-direction: column; padding: 0.9rem 0 0.4rem; }
+    .bs-title { position: absolute; left: 2rem; top: 0; font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); pointer-events: none; }
+    .beauty-strip { position: static; order: 0; display: flex; align-items: center; gap: 12px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-padding-left: 2rem; padding: 0 2rem; scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; }
+    .beauty-strip::-webkit-scrollbar { display: none; }
+    .beauty-strip.dragging { cursor: grabbing; scroll-snap-type: none; }
+    .b-tile { position: relative; flex: 0 0 auto; scroll-snap-align: start; background: #e9e6df; overflow: hidden; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .b-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease-snap); -webkit-user-drag: none; user-select: none; }
     @media (hover: hover) { .b-tile:hover img { transform: scale(1.025); } }
     .b-tile video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-    .bs-credit {
-      position: absolute; left: 2rem; bottom: calc(1.4rem + env(safe-area-inset-bottom)); z-index: 5;
-      font-size: 0.86rem; letter-spacing: -0.01em; color: var(--muted); transition: color 0.25s ease;
-    }
+    .bs-credit { position: static; order: 2; display: block; width: fit-content; margin: 0.7rem 2rem 0; font-size: 0.86rem; letter-spacing: -0.01em; color: var(--muted); transition: color 0.25s ease; }
     .bs-credit:hover { color: var(--ink); }
-    /* indicador de avance: una línea finísima pegada al borde inferior que se va llenando (sin punto, casi invisible, no ocupa espacio) */
-    .bs-lines { position: absolute; left: 2rem; right: 2rem; bottom: calc(9px + env(safe-area-inset-bottom)); z-index: 5; pointer-events: none; }
+    /* indicador de avance: una línea finísima bajo la tira que se va llenando (sin punto ni flechas, casi invisible) */
+    .bs-lines { position: static; order: 1; margin: 0.8rem 2rem 0; pointer-events: none; }
     .bs-lines .trk { display: block; position: relative; width: 100%; height: 1px; background: rgba(14, 52, 200, 0.12); }
-    .bs-lines .trk b { position: absolute; inset: 0; background: var(--ink); opacity: 0.5; transform-origin: left center; transform: scaleX(0); }
-    @media (max-width: 768px) { .bs-title, .bs-credit { left: 1.25rem; } .bs-lines { left: 1.25rem; right: 1.25rem; } }
-    /* Tarjetas horizontales (postales 4:3): cuadrícula en vez de tira. Escritorio: una grande 2×2 + cuatro pequeñas (x4); celular: una a todo el ancho + 2×2 (x2) */
+    .bs-lines .trk b { position: absolute; inset: 0; background: var(--ink); opacity: 0.5; transform-origin: left center; transform: scaleX(0.04); }
+    @media (max-width: 768px) { .bs-title { left: 1.25rem; } .beauty-strip { gap: 6px; padding: 0 1.25rem; scroll-padding-left: 1.25rem; } .bs-credit, .bs-lines { margin-left: 1.25rem; margin-right: 1.25rem; } }    /* Tarjetas horizontales (postales 4:3): cuadrícula en vez de tira. Escritorio: una grande 2×2 + cuatro pequeñas (x4); celular: una a todo el ancho + 2×2 (x2) */
     .beauty-section[data-beauty="grid"] .beauty-track { height: auto; }
     .beauty-section[data-beauty="grid"] .beauty-stage { position: relative; height: auto; overflow: visible; max-width: 1440px; margin: 0 auto; padding: 1rem 2rem 1.5rem; }
     .beauty-section[data-beauty="grid"] .beauty-stage::before, .beauty-section[data-beauty="grid"] .bs-lines { display: none; }
-    .beauty-section[data-beauty="grid"] .beauty-strip { position: static; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; transform: none !important; padding: 0 !important; height: auto !important; }
+    .beauty-section[data-beauty="grid"] .beauty-strip { position: static; overflow: visible; scroll-snap-type: none; cursor: default; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; transform: none !important; padding: 0 !important; height: auto !important; }
     .beauty-section[data-beauty="grid"] .b-tile { width: 100% !important; height: auto !important; }
     .beauty-section[data-beauty="grid"] .b-tile:first-child { grid-column: span 2; grid-row: span 2; aspect-ratio: auto !important; height: 100% !important; }
     @media (max-width: 768px) {
@@ -498,7 +494,7 @@
     .beauty-section[data-beauty="muro"] .bs-title,
     .beauty-section[data-beauty="muro"] .bs-credit { position: static; display: block; margin: 0 0 1.25rem; }
     .beauty-section[data-beauty="muro"] .bs-credit { margin: 1.25rem 0 0; }
-    .beauty-section[data-beauty="muro"] .beauty-strip { position: static; display: block; column-count: 3; column-gap: 10px; transform: none !important; padding: 0 !important; }
+    .beauty-section[data-beauty="muro"] .beauty-strip { position: static; overflow: visible; scroll-snap-type: none; display: block; column-count: 3; column-gap: 10px; transform: none !important; padding: 0 !important; }
     .beauty-section[data-beauty="muro"] .b-tile { width: auto !important; height: auto !important; margin-bottom: 10px; break-inside: avoid; }
     .beauty-section[data-beauty="muro"] .b-tile:nth-child(3n+1) { aspect-ratio: 3 / 4; }
     .beauty-section[data-beauty="muro"] .b-tile:nth-child(3n+2) { aspect-ratio: 4 / 5; }
@@ -689,7 +685,15 @@
     .hs-bar { padding-top: 0.6rem; }
     .beauty-section { border-bottom: 0; }
     .works-stack { gap: 2.25rem; }
-    .interlude + .beauty-section[data-beauty="tira"] .beauty-track { margin-top: -2.5rem; }   /* la tira arranca justo bajo la línea del título (antes quedaba ~95 px de blanco) */
+    /* Editorial: el muro arranca casi pegado a la línea del título */
+    #editorial.gallery-track { margin-top: -3rem; background: transparent; }
+    #editorial .gallery-stage { background: transparent; }
+    /* Documental: la primera tarjeta (Tour de Café) grande y las demás pequeñas, sin huecos */
+    .works-stack.clips[data-feature] .work-unit:first-child { grid-column: span 2; grid-row: span 2; }
+    @media (max-width: 519px) {
+      .works-stack.clips[data-feature] .work-unit:first-child { grid-row: span 1; }
+      .works-stack.clips[data-feature] .work-unit:last-child { grid-column: span 2; }
+    }
     @media (max-width: 768px) {
       .interlude { padding: 1.6rem 1.25rem 1rem; }
       .interlude-line { bottom: 0.4rem; }
@@ -1120,7 +1124,7 @@
       <figure class="hs-i" style="--ar:0.8" data-type="image" data-src="img/domino/dm09.jpg" data-title="Domino &amp; Marta" data-role="Serie fotogr&#225;fica"><img src="img/domino/dm09.jpg" alt="Domino &amp; Marta" loading="lazy" decoding="async"></figure>
       <figure class="hs-i" style="--ar:0.8" data-type="image" data-src="img/domino/dm10.jpg" data-title="Domino &amp; Marta" data-role="Serie fotogr&#225;fica"><img src="img/domino/dm10.jpg" alt="Domino &amp; Marta" loading="lazy" decoding="async"></figure>
       </div>
-    <div class="hs-bar"><div class="hs-prog" aria-hidden="true"><i></i></div><button type="button" class="hs-arrow" data-hs="-1" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button type="button" class="hs-arrow" data-hs="1" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div>
+    <div class="hs-bar"><div class="hs-prog" aria-hidden="true"><i></i></div></div>
     </section>
 
     <!-- CINE DOCUMENTAL -->
@@ -1147,7 +1151,7 @@
           <h2 class="sticky-pillar-title">Concordia</h2>
           <p class="sticky-pillar-desc">Documentales sobre caficultores de Concordia para Café La Manchuria.</p>
         </aside>
-        <div class="works-stack clips" data-rail="Películas">
+        <div class="works-stack clips" data-feature data-rail="Películas">
           <article class="work-unit" data-type="video" data-format="16:9" data-video-id="Y1xO_pvycAk" data-title="Tour de Caf&#233; &amp; Origen" data-role="L&#237;der Visual de Marketing">
             <div class="vertical-rail" aria-hidden="true">CONCORDIA</div>
             <div class="media-col">
@@ -1217,7 +1221,7 @@
         <figure class="hs-i" style="--ar:0.8" data-type="image" data-src="img/eduardo/f03.jpg" data-title="Bourbon Rosado" data-role="Caf&#233; La Manchuria &#183; Eduardo V&#233;lez"><img src="img/eduardo/f03.jpg" alt="Bourbon Rosado" loading="lazy" decoding="async"></figure>
         <figure class="hs-i" style="--ar:0.8" data-type="image" data-src="img/eduardo/f04.jpg" data-title="Bourbon Rosado" data-role="Caf&#233; La Manchuria &#183; Eduardo V&#233;lez"><img src="img/eduardo/f04.jpg" alt="Bourbon Rosado" loading="lazy" decoding="async"></figure>
       </div>
-      <div class="hs-bar"><div class="hs-prog" aria-hidden="true"><i></i></div><button type="button" class="hs-arrow" data-hs="-1" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button type="button" class="hs-arrow" data-hs="1" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div>
+      <div class="hs-bar"><div class="hs-prog" aria-hidden="true"><i></i></div></div>
       <p class="hs-line">Caja amarilla</p>
       <div class="hscroll">
         <figure class="hs-i" style="--ar:1" data-type="image" data-src="img/eduardo/p1.jpg" data-title="Bourbon Rosado &#183; Caja amarilla" data-role="Caf&#233; La Manchuria &#183; Eduardo V&#233;lez"><img src="img/eduardo/p1.jpg" alt="Bourbon Rosado &#183; Caja amarilla" loading="lazy" decoding="async"></figure>
@@ -1226,7 +1230,7 @@
         <figure class="hs-i" style="--ar:1" data-type="image" data-src="img/eduardo/p4.jpg" data-title="Bourbon Rosado &#183; Caja amarilla" data-role="Caf&#233; La Manchuria &#183; Eduardo V&#233;lez"><img src="img/eduardo/p4.jpg" alt="Bourbon Rosado &#183; Caja amarilla" loading="lazy" decoding="async"></figure>
         <figure class="hs-i" style="--ar:1" data-type="image" data-src="img/eduardo/p5.jpg" data-title="Bourbon Rosado &#183; Caja amarilla" data-role="Caf&#233; La Manchuria &#183; Eduardo V&#233;lez"><img src="img/eduardo/p5.jpg" alt="Bourbon Rosado &#183; Caja amarilla" loading="lazy" decoding="async"></figure>
       </div>
-      <div class="hs-bar"><div class="hs-prog" aria-hidden="true"><i></i></div><button type="button" class="hs-arrow" data-hs="-1" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button type="button" class="hs-arrow" data-hs="1" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div>
+      <div class="hs-bar"><div class="hs-prog" aria-hidden="true"><i></i></div></div>
       <p class="hs-line">Finca Las Flores &#183; Bourbon</p>
       <div class="hscroll">
         <figure class="hs-i b-tile" style="--ar:0.8" data-type="video" data-format="4:5" data-video-src="video/hojas/bourbon-1.mp4" data-preview="video/hojas/bourbon-1-preview.mp4" data-poster="img/hojas/bourbon-1.jpg" data-title="Finca Las Flores &#183; Bourbon 1" data-role="Caf&#233; La Manchuria &#183; Eduardo V&#233;lez"><img src="img/hojas/bourbon-1.jpg" alt="Finca Las Flores &#183; Bourbon 1" loading="lazy" decoding="async"></figure>
@@ -1237,7 +1241,7 @@
         <figure class="hs-i b-tile" style="--ar:0.8" data-type="video" data-format="4:5" data-video-src="video/hojas/bourbon-6.mp4" data-preview="video/hojas/bourbon-6-preview.mp4" data-poster="img/hojas/bourbon-6.jpg" data-title="Finca Las Flores &#183; Bourbon 6" data-role="Caf&#233; La Manchuria &#183; Eduardo V&#233;lez"><img src="img/hojas/bourbon-6.jpg" alt="Finca Las Flores &#183; Bourbon 6" loading="lazy" decoding="async"></figure>
         <figure class="hs-i b-tile" style="--ar:0.8" data-type="video" data-format="4:5" data-video-src="video/hojas/bourbon-7.mp4" data-preview="video/hojas/bourbon-7-preview.mp4" data-poster="img/hojas/bourbon-7.jpg" data-title="Finca Las Flores &#183; Bourbon 7" data-role="Caf&#233; La Manchuria &#183; Eduardo V&#233;lez"><img src="img/hojas/bourbon-7.jpg" alt="Finca Las Flores &#183; Bourbon 7" loading="lazy" decoding="async"></figure>
       </div>
-      <div class="hs-bar"><div class="hs-prog" aria-hidden="true"><i></i></div><button type="button" class="hs-arrow" data-hs="-1" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button type="button" class="hs-arrow" data-hs="1" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div>
+      <div class="hs-bar"><div class="hs-prog" aria-hidden="true"><i></i></div></div>
       <p class="hs-line">Finca Las Flores &#183; Chiroso</p>
       <div class="hscroll">
         <figure class="hs-i b-tile" style="--ar:0.8" data-type="video" data-format="4:5" data-video-src="video/hojas/chiroso-1.mp4" data-preview="video/hojas/chiroso-1-preview.mp4" data-poster="img/hojas/chiroso-1.jpg" data-title="Finca Las Flores &#183; Chiroso 1" data-role="Caf&#233; La Manchuria &#183; Eduardo V&#233;lez"><img src="img/hojas/chiroso-1.jpg" alt="Finca Las Flores &#183; Chiroso 1" loading="lazy" decoding="async"></figure>
@@ -1246,7 +1250,7 @@
         <figure class="hs-i b-tile" style="--ar:0.8" data-type="video" data-format="4:5" data-video-src="video/hojas/chiroso-4.mp4" data-preview="video/hojas/chiroso-4-preview.mp4" data-poster="img/hojas/chiroso-4.jpg" data-title="Finca Las Flores &#183; Chiroso 4" data-role="Caf&#233; La Manchuria &#183; Eduardo V&#233;lez"><img src="img/hojas/chiroso-4.jpg" alt="Finca Las Flores &#183; Chiroso 4" loading="lazy" decoding="async"></figure>
         <figure class="hs-i b-tile" style="--ar:0.8" data-type="video" data-format="4:5" data-video-src="video/hojas/chiroso-5.mp4" data-preview="video/hojas/chiroso-5-preview.mp4" data-poster="img/hojas/chiroso-5.jpg" data-title="Finca Las Flores &#183; Chiroso 5" data-role="Caf&#233; La Manchuria &#183; Eduardo V&#233;lez"><img src="img/hojas/chiroso-5.jpg" alt="Finca Las Flores &#183; Chiroso 5" loading="lazy" decoding="async"></figure>
       </div>
-      <div class="hs-bar"><div class="hs-prog" aria-hidden="true"><i></i></div><button type="button" class="hs-arrow" data-hs="-1" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button type="button" class="hs-arrow" data-hs="1" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div>
+      <div class="hs-bar"><div class="hs-prog" aria-hidden="true"><i></i></div></div>
       <p class="hs-line">Finca Rosi Caf&#233;</p>
       <div class="hscroll">
         <figure class="hs-i b-tile" style="--ar:0.8" data-type="video" data-format="4:5" data-video-src="video/hojas/rosi-1.mp4" data-preview="video/hojas/rosi-1-preview.mp4" data-poster="img/hojas/rosi-1.jpg" data-title="Finca Rosi Caf&#233; 1" data-role="Caf&#233; La Manchuria &#183; Eduardo V&#233;lez"><img src="img/hojas/rosi-1.jpg" alt="Finca Rosi Caf&#233; 1" loading="lazy" decoding="async"></figure>
@@ -1257,7 +1261,7 @@
         <figure class="hs-i b-tile" style="--ar:0.8" data-type="video" data-format="4:5" data-video-src="video/hojas/rosi-6.mp4" data-preview="video/hojas/rosi-6-preview.mp4" data-poster="img/hojas/rosi-6.jpg" data-title="Finca Rosi Caf&#233; 6" data-role="Caf&#233; La Manchuria &#183; Eduardo V&#233;lez"><img src="img/hojas/rosi-6.jpg" alt="Finca Rosi Caf&#233; 6" loading="lazy" decoding="async"></figure>
         <figure class="hs-i b-tile" style="--ar:0.8" data-type="video" data-format="4:5" data-video-src="video/hojas/rosi-7.mp4" data-preview="video/hojas/rosi-7-preview.mp4" data-poster="img/hojas/rosi-7.jpg" data-title="Finca Rosi Caf&#233; 7" data-role="Caf&#233; La Manchuria &#183; Eduardo V&#233;lez"><img src="img/hojas/rosi-7.jpg" alt="Finca Rosi Caf&#233; 7" loading="lazy" decoding="async"></figure>
       </div>
-      <div class="hs-bar"><div class="hs-prog" aria-hidden="true"><i></i></div><button type="button" class="hs-arrow" data-hs="-1" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button type="button" class="hs-arrow" data-hs="1" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div>
+      <div class="hs-bar"><div class="hs-prog" aria-hidden="true"><i></i></div></div>
       <p class="hs-line">Concordia &#183; Fotograf&#237;a</p>
       <div class="hscroll">
         <figure class="hs-i" style="--ar:0.6667" data-type="image" data-src="img/eduardo/f06.jpg" data-title="Eduardo V&#233;lez" data-role="Fotograf&#237;a &#183; Caf&#233; La Manchuria"><img src="img/eduardo/f06.jpg" alt="Eduardo V&#233;lez" loading="lazy" decoding="async"></figure>
@@ -1270,7 +1274,7 @@
         <figure class="hs-i" style="--ar:0.6667" data-type="image" data-src="img/eduardo/f14.jpg" data-title="Eduardo V&#233;lez" data-role="Fotograf&#237;a &#183; Caf&#233; La Manchuria"><img src="img/eduardo/f14.jpg" alt="Eduardo V&#233;lez" loading="lazy" decoding="async"></figure>
         <figure class="hs-i" style="--ar:0.6667" data-type="image" data-src="img/eduardo/f15.jpg" data-title="Eduardo V&#233;lez" data-role="Fotograf&#237;a &#183; Caf&#233; La Manchuria"><img src="img/eduardo/f15.jpg" alt="Eduardo V&#233;lez" loading="lazy" decoding="async"></figure>
       </div>
-      <div class="hs-bar"><div class="hs-prog" aria-hidden="true"><i></i></div><button type="button" class="hs-arrow" data-hs="-1" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button type="button" class="hs-arrow" data-hs="1" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div>
+      <div class="hs-bar"><div class="hs-prog" aria-hidden="true"><i></i></div></div>
       </div></div>
     </section>
 
@@ -1659,6 +1663,7 @@
     var clipGrids = $$('.works-stack.clips');
     function fillGrids() {
       clipGrids.forEach(function (g) {
+        if (g.hasAttribute('data-feature')) return;
         var cards = $$('.work-unit', g), n = cards.length; if (!n) return;
         cards.forEach(function (c) { c.style.gridColumn = ''; var f = $('.editorial-frame', c); if (f) f.style.aspectRatio = ''; });
         var cols = getComputedStyle(g).gridTemplateColumns.split(' ').length;
@@ -1670,7 +1675,7 @@
     }
     fillGrids(); window.addEventListener('resize', fillGrids);
     // Editorial y Beauty: el riel vertical desaparece al empezar el recorrido para no quedar sobre las fotos
-    var railStages = [{ sec: $('#editorial'), stage: $('.gallery-stage') }].concat($$('.beauty-section').map(function (s) { return { sec: s, stage: $('.beauty-stage', s) }; }));
+    var railStages = [{ sec: $('#editorial'), stage: $('.gallery-stage') }];
     function updateRails() {
       railStages.forEach(function (o) {
         if (!o.sec || !o.stage) return;
@@ -1698,7 +1703,7 @@
       if (RM) return;
       var W = galStage.clientWidth, H = galStage.clientHeight;
       var hh = parseFloat(getComputedStyle(html).getPropertyValue('--header-h')) || 54;
-      var mob = W <= 768, top = hh + 8, bottom = mob ? 64 : 58, areaH = H - top - bottom;
+      var mob = W <= 768, top = hh + 2, bottom = mob ? 64 : 58, areaH = H - top - bottom;
       // collage grande: elige las columnas (que dividan exacto el total, sin huecos) que ocupan más pantalla,
       // con celdas entre 5:6 y 5:7 (verticales, como las fotos); en la vista general se ven todas las fotos pequeñas
       var best = null;
@@ -1721,7 +1726,7 @@
         if ((r / 2) % 2 === 1) row.reverse();
         stops = stops.concat(row);
       }
-      var over = { x: 0, y: 0, s: 1 }, foc = function (k) { return { x: cx(stops[k]), y: cy(stops[k]), s: sFocus }; };
+      var over = { x: 0, y: Math.max(0, (areaH - R * ch) / 2 - 4), s: 1 }, foc = function (k) { return { x: cx(stops[k]), y: cy(stops[k]), s: sFocus }; };
       var tl = [{ len: 1.1, a: over, b: foc(0), i0: -1, i1: stops[0] }];
       for (var k = 0; k < stops.length; k++) {
         tl.push({ len: 0.55, a: foc(k), b: foc(k), i0: stops[k], i1: stops[k] });
@@ -1868,56 +1873,60 @@
 
     /* ---------- 5 · Beauty: tira de fotos grandes que avanza con el scroll (o muro con ?beauty=muro) ---------- */
     var moved = false; // el visor la consulta para no abrir al arrastrar
-    // Todas las tiras (Beauty, Moda, Social, Cine, Eduardo Vélez…) usan el mismo mecanismo; cada tarjeta lleva su proporción en data-ar (ancho/alto)
+    // Todas las tiras (Beauty, Moda, Social, Estéticas, Eduardo Vélez, Viaje del grano…) son carruseles horizontales independientes del scroll vertical;
+    // cada tarjeta lleva su proporción en data-ar (ancho/alto). Tarjetas horizontales (4:3) = cuadrícula.
     var strips = $$('.beauty-section').map(function (sec) {
       var stage = $('.beauty-stage', sec), strip = $('.beauty-strip', sec), box = $('.bs-lines', sec);
       var mode = (sec.id === 'beauty' && new URLSearchParams(location.search).get('beauty')) || sec.getAttribute('data-beauty') || 'tira';
       if (RM) mode = 'muro';
       sec.setAttribute('data-beauty', mode);
       box.innerHTML = '<i class="trk"><b></b></i>';
-      return { sec: sec, track: $('.beauty-track', sec), stage: stage, strip: strip, tiles: $$('.b-tile', strip), thumb: box.querySelector('b'), mode: mode, W: 0, dist: 0 };
+      return { sec: sec, stage: stage, strip: strip, tiles: $$('.b-tile', strip), thumb: box.querySelector('b'), mode: mode, W: 0, wasGrid: false };
     });
+    function stripProgress(o) {
+      var m = o.strip.scrollWidth - o.strip.clientWidth, p = m > 0 ? clamp(o.strip.scrollLeft / m, 0, 1) : 0;
+      o.thumb.style.transform = 'scaleX(' + (0.04 + p * 0.96).toFixed(4) + ')';
+      o.stage.classList.toggle('rail-off', o.strip.scrollLeft > 8);   // el riel vertical se esconde en cuanto se empieza a deslizar
+    }
     function layoutStrip(o) {
-      var W = o.stage.clientWidth, H = o.stage.clientHeight, mob = W <= 768;
+      var W = o.stage.clientWidth, H = window.innerHeight, mob = W <= 768;
       var allLand = o.tiles.every(function (t) { return (parseFloat(t.getAttribute('data-ar')) || 0.5625) > 1; });
-      // tarjetas horizontales (4:3): cuadrícula (una grande + pequeñas) en vez de tira
       if (!RM && allLand) { o.mode = 'grid'; } else if (o.mode === 'grid') { o.mode = 'tira'; }
       o.sec.setAttribute('data-beauty', o.mode);
       if (o.mode === 'grid') {
-        o.track.style.height = ''; o.strip.style.cssText = '';
+        o.wasGrid = true; o.strip.removeAttribute('style');
         o.tiles.forEach(function (t) { t.style.width = ''; t.style.height = ''; t.style.aspectRatio = String(parseFloat(t.getAttribute('data-ar')) || 1.3333); });
         o.W = W; return;
       }
-      if (o.mode !== 'tira') { o.track.style.height = ''; return; }
-      var hh = parseFloat(getComputedStyle(html).getPropertyValue('--header-h')) || 54;
-      var hasCredit = !!$('.bs-credit', o.sec);
-      var top = hh + 8, bottom = hasCredit ? 54 : 26, areaH = H - top - bottom;
-      var gap = mob ? 6 : 12, padL = mob ? 12 : 32, stripW = 2 * padL + (o.tiles.length - 1) * gap;
+      if (o.mode !== 'tira') return;
+      if (o.wasGrid) { o.wasGrid = false; o.strip.removeAttribute('style'); }
+      var maxH = mob ? H * 0.78 : Math.min(H * 0.8, 760);
       o.tiles.forEach(function (t) {
         var ar = parseFloat(t.getAttribute('data-ar')) || 0.5625;
-        var capW = ar <= 1 ? W * (mob ? 0.9 : 0.4) : W * (mob ? 0.94 : 0.62);
-        // las verticales pueden recortarse hasta un 10 % del ancho (object-fit: cover) para aprovechar el alto de la pantalla
-        var arc = ar <= 1 ? ar * 0.9 : ar;
-        var th = Math.min(areaH, capW / arc), tw = Math.min(capW, th * arc);
-        t.style.aspectRatio = ''; t.style.width = tw + 'px'; t.style.height = th + 'px'; stripW += tw;
+        var capW = ar <= 1 ? W * (mob ? 0.84 : 0.4) : W * (mob ? 0.92 : 0.62);
+        var th = Math.min(maxH, capW / ar), tw = th * ar;
+        t.style.aspectRatio = ''; t.style.width = tw.toFixed(1) + 'px'; t.style.height = th.toFixed(1) + 'px';
       });
-      o.strip.style.top = top + 'px'; o.strip.style.height = areaH + 'px'; o.strip.style.alignItems = 'center'; o.strip.style.gap = gap + 'px'; o.strip.style.padding = '0 ' + padL + 'px';
-      o.W = W; o.dist = Math.max(0, stripW - W);
-      o.track.style.height = (o.dist + H) + 'px';
-    }    function beautyLayout() { if (strips) strips.forEach(layoutStrip); }
-    function beautyUpdate() {
-      if (strips) strips.forEach(function (o) {
-        if (o.mode !== 'tira') return;
-        var r = o.track.getBoundingClientRect(), vh = window.innerHeight;
-        if (r.bottom < -80 || r.top > vh + 80) return;
-        if (!o.W) layoutStrip(o);
-        var p = clamp(-r.top / Math.max(1, o.track.offsetHeight - o.stage.offsetHeight), 0, 1);
-        o.strip.style.transform = 'translate3d(' + (-p * o.dist).toFixed(1) + 'px,0,0)';
-        o.thumb.style.transform = 'scaleX(' + p.toFixed(4) + ')';
-      });
+      o.W = W; stripProgress(o);
     }
+    function beautyLayout() { if (strips) strips.forEach(layoutStrip); }
+    function beautyUpdate() { /* sin movimiento atado al scroll vertical */ }
+    strips.forEach(function (o) {
+      var drag = null;
+      o.strip.addEventListener('scroll', function () { stripProgress(o); }, { passive: true });
+      o.strip.addEventListener('pointerdown', function (e) { if (o.mode !== 'tira' || e.pointerType !== 'mouse' || e.button !== 0) return; drag = { x: e.clientX, l: o.strip.scrollLeft, m: false }; });
+      window.addEventListener('pointermove', function (e) {
+        if (!drag || drag.o) return; var dx = e.clientX - drag.x;
+        if (!drag.m && Math.abs(dx) > 5) { drag.m = true; o.strip.classList.add('dragging'); }
+        if (drag.m) o.strip.scrollLeft = drag.l - dx;
+      });
+      window.addEventListener('pointerup', function () {
+        if (!drag) return; var d = drag; drag = null;
+        if (d.m) { o.strip.classList.remove('dragging'); moved = true; setTimeout(function () { moved = false; }, 80); }
+      });
+      $$('img', o.strip).forEach(function (im) { im.draggable = false; });
+    });
     beautyLayout(); beautyUpdate();
-
     // Tarjetas con video propio (data-video-src): vista previa muda en bucle, solo mientras estan a la vista
     $$('.b-tile[data-video-src]').forEach(function (tile) {
       var v = document.createElement('video');
