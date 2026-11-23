@@ -480,13 +480,18 @@
     .bs-lines .trk { display: block; position: relative; width: 100%; height: 1px; background: rgba(14, 52, 200, 0.12); }
     .bs-lines .trk b { position: absolute; inset: 0; background: var(--ink); opacity: 0.5; transform-origin: left center; transform: scaleX(0); }
     @media (max-width: 768px) { .bs-title, .bs-credit { left: 1.25rem; } .bs-lines { left: 1.25rem; right: 1.25rem; } }
-    /* Móvil y tarjetas horizontales (postales 4:3): en lugar de una tira con mucho blanco arriba y abajo, van apiladas a todo el ancho */
-    .beauty-section[data-beauty="lista"] .beauty-track { height: auto; }
-    .beauty-section[data-beauty="lista"] .beauty-stage { position: relative; height: auto; overflow: visible; padding: 1.1rem 1.25rem 1.5rem; }
-    .beauty-section[data-beauty="lista"] .beauty-stage::before, .beauty-section[data-beauty="lista"] .bs-lines { display: none; }
-    .beauty-section[data-beauty="lista"] .beauty-strip { position: static; display: flex; flex-direction: column; gap: 6px; transform: none !important; padding: 0 !important; height: auto !important; }
-    .beauty-section[data-beauty="lista"] .b-tile { width: 100% !important; height: auto !important; }
-
+    /* Tarjetas horizontales (postales 4:3): cuadrícula en vez de tira. Escritorio: una grande 2×2 + cuatro pequeñas (x4); celular: una a todo el ancho + 2×2 (x2) */
+    .beauty-section[data-beauty="grid"] .beauty-track { height: auto; }
+    .beauty-section[data-beauty="grid"] .beauty-stage { position: relative; height: auto; overflow: visible; max-width: 1440px; margin: 0 auto; padding: 1rem 2rem 1.5rem; }
+    .beauty-section[data-beauty="grid"] .beauty-stage::before, .beauty-section[data-beauty="grid"] .bs-lines { display: none; }
+    .beauty-section[data-beauty="grid"] .beauty-strip { position: static; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; transform: none !important; padding: 0 !important; height: auto !important; }
+    .beauty-section[data-beauty="grid"] .b-tile { width: 100% !important; height: auto !important; }
+    .beauty-section[data-beauty="grid"] .b-tile:first-child { grid-column: span 2; grid-row: span 2; aspect-ratio: auto !important; height: 100% !important; }
+    @media (max-width: 768px) {
+      .beauty-section[data-beauty="grid"] .beauty-stage { padding: 0.6rem 1.25rem 1rem; }
+      .beauty-section[data-beauty="grid"] .beauty-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .beauty-section[data-beauty="grid"] .b-tile:first-child { grid-row: span 1; aspect-ratio: 4 / 3 !important; height: auto !important; }
+    }
     /* variante "muro": todas las fotos visibles a la vez, en columnas de distinta altura */
     .beauty-section[data-beauty="muro"] .beauty-track { height: auto; }
     .beauty-section[data-beauty="muro"] .beauty-stage { position: relative; height: auto; overflow: visible; padding: calc(var(--header-h) + 1.25rem) 2rem 3rem; }
@@ -684,7 +689,7 @@
     .hs-bar { padding-top: 0.6rem; }
     .beauty-section { border-bottom: 0; }
     .works-stack { gap: 2.25rem; }
-    .interlude + .beauty-section .beauty-track { margin-top: -2.5rem; }   /* la tira arranca justo bajo la línea del título (antes quedaba ~95 px de blanco) */
+    .interlude + .beauty-section[data-beauty="tira"] .beauty-track { margin-top: -2.5rem; }   /* la tira arranca justo bajo la línea del título (antes quedaba ~95 px de blanco) */
     @media (max-width: 768px) {
       .interlude { padding: 1.6rem 1.25rem 1rem; }
       .interlude-line { bottom: 0.4rem; }
@@ -693,7 +698,6 @@
       .hs-section { padding: 1rem 0 0.5rem; }
       .hs-bar { padding: 0.5rem 1.25rem 0; }
       .works-stack { gap: 1.5rem; }
-      .beauty-section[data-beauty="lista"] .beauty-stage { padding: 0.6rem 1.25rem 1rem; }
     }
 
     /* Áreas táctiles ≥ 44 px en móvil (sin cambiar el diseño: los enlaces pequeños amplían su zona de toque con un pseudo-elemento) */
@@ -1876,10 +1880,10 @@
     function layoutStrip(o) {
       var W = o.stage.clientWidth, H = o.stage.clientHeight, mob = W <= 768;
       var allLand = o.tiles.every(function (t) { return (parseFloat(t.getAttribute('data-ar')) || 0.5625) > 1; });
-      // celular + tarjetas horizontales: lista apilada a todo el ancho (sin blanco arriba y abajo)
-      if (!RM && mob && allLand) { o.mode = 'lista'; } else if (o.mode === 'lista') { o.mode = 'tira'; }
+      // tarjetas horizontales (4:3): cuadrícula (una grande + pequeñas) en vez de tira
+      if (!RM && allLand) { o.mode = 'grid'; } else if (o.mode === 'grid') { o.mode = 'tira'; }
       o.sec.setAttribute('data-beauty', o.mode);
-      if (o.mode === 'lista') {
+      if (o.mode === 'grid') {
         o.track.style.height = ''; o.strip.style.cssText = '';
         o.tiles.forEach(function (t) { t.style.width = ''; t.style.height = ''; t.style.aspectRatio = String(parseFloat(t.getAttribute('data-ar')) || 1.3333); });
         o.W = W; return;
