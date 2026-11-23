@@ -427,8 +427,9 @@
     .gal-lines.all i { background: rgba(10, 10, 10, 0.5); }
 
     /* encabezado: la barra se oculta al bajar (el logo queda fijo); oscuro solo sobre el cierre */
-    header { transition: transform 0.35s var(--ease-snap), background-color 0.4s ease, border-color 0.4s ease; }
-    header.is-hidden { transform: translateY(-100%); }
+    /* la barra (Categorías / Contacto) ya no se desliza al ocultarse: solo aparece o desaparece (fundido corto), sin pasar por encima de la franja del logo */
+    header { transition: opacity 0.16s ease, background-color 0.4s ease, border-color 0.4s ease; }
+    header.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.16s ease, visibility 0s 0.16s; }
     header.dark { background: var(--sala-bg); border-bottom-color: var(--sala-line); }
     header.dark .cat-dropdown-trigger, header.dark .nav-contact-link { color: var(--sala-ink); }
 
