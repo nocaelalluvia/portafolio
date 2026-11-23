@@ -1462,6 +1462,7 @@
         <nav class="foot-col" aria-label="Canales">
           <h3>Canales</h3>
           <a href="https://www.instagram.com/nocaelalluvia/" target="_blank" rel="noopener">Instagram</a>
+          <a href="curriculum/juan-camilo-bastidas-cv.pdf" target="_blank" rel="noopener">CV</a>
           <!-- Behance y otros canales propios: agregar aquí un <a href="URL" target="_blank" rel="noopener">Nombre</a> cuando se tenga la URL real -->
           <!-- Solo canales propios (sin enlaces a clientes). Agrega aquí los que me pases -->
         </nav>
@@ -1937,6 +1938,8 @@
       var el = document.getElementById(a.getAttribute('href').slice(1));
       if (!el) return;
       e.preventDefault();
+      /* Contacto: el correo y el teléfono están abajo del pie, no en su borde superior → ir al final de la página */
+      if (a.getAttribute('href') === '#contacto') { fastScrollTo(Math.max(0, document.documentElement.scrollHeight - window.innerHeight)); return; }
       var tgt = a.getAttribute('href') === '#portada' ? null : (el.previousElementSibling && el.previousElementSibling.classList.contains('interlude') ? el.previousElementSibling : el);
       fastScrollTo(tgt ? Math.max(0, tgt.getBoundingClientRect().top + window.scrollY - (parseFloat(getComputedStyle(html).getPropertyValue('--header-h')) || 58)) : 0);
     });
