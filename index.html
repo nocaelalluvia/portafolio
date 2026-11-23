@@ -725,6 +725,10 @@
     /* Sin imanes (decisión 2026-11-23): todo queda exactamente donde la persona suelta el dedo */
     /* etiqueta pequeña "Capítulo N" sobre cada tarjeta de El viaje del grano (para saber cuál es cuál mientras se navega) */
     .b-tile[data-label]::after { content: attr(data-label); position: absolute; left: 0.6rem; top: 0.6rem; z-index: 2; padding: 0.3rem 0.55rem; background: rgba(255, 255, 255, 0.94); color: var(--ink); font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1; pointer-events: none; }
+    /* franja blanca fija con solo el logo: cuando la barra (Categorías / Contacto) se esconde al bajar, el logo no flota sobre las fotos/videos */
+    #top-solid { position: fixed; top: 0; left: 0; right: 0; height: 50px; background: var(--bg); z-index: 195; pointer-events: none; opacity: 0; transition: opacity 0.2s ease; }
+    html.top-solid #top-solid { opacity: 1; }
+    html.is-loading #top-solid, html.modal-open #top-solid { opacity: 0; }
     /* Áreas táctiles ≥ 44 px en móvil (sin cambiar el diseño: los enlaces pequeños amplían su zona de toque con un pseudo-elemento) */
     @media (max-width: 768px), (pointer: coarse) {
       .foot-col a { min-height: 44px; display: flex; align-items: center; padding: 0; }
@@ -773,6 +777,7 @@
     </div>
   </header>
 
+  <div id="top-solid" aria-hidden="true"></div>
   <nav class="cat-dropdown-panel" id="cat-dropdown-panel" aria-label="Categorías">
     <a href="#portada" class="cat-dropdown-link active" data-spy-target="portada">Presentación</a>
     <a href="#vanity" class="cat-dropdown-link" data-spy-target="vanity">Vanity</a>
@@ -1623,6 +1628,7 @@
     var lastInput = 0; ['wheel', 'touchstart', 'touchmove', 'keydown', 'pointerdown'].forEach(function (ev) { window.addEventListener(ev, function () { lastInput = performance.now(); }, { passive: true }); });
     function hdrScroll() {
       var y = window.scrollY, d = y - lastY;
+      html.classList.toggle('top-solid', y > 120);
       if (catPanel.classList.contains('open') || y <= 120) { if (hdr.classList.contains('is-hidden')) showHdr(); lastY = y; return; }
       if (Math.abs(d) < 8) return;
       if (performance.now() - lastInput > 160 && Math.abs(d) < 140) { lastY = y; return; }   // ajuste automático (imán): no cambia el encabezado
@@ -1938,7 +1944,8 @@
     function frame() { ticking = false; hdrScroll(); updateProgress(); updateSpy(); updateHero(); updateRails(); updateBand(); galUpdate(); beautyUpdate(); updateInterludes(); }
     function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', function () { syncHeaderHeight(); galLayout(); beautyLayout(); fitInterludes(); onScroll(); });
+    var lastW = window.innerWidth;   // en móvil la barra del navegador se oculta/aparece al hacer scroll y cambia solo el ALTO: no se recalcula nada (evitaba saltos)
+    window.addEventListener('resize', function () { syncHeaderHeight(); fitInterludes(); var w = window.innerWidth; if (w !== lastW) { lastW = w; galLayout(); beautyLayout(); } onScroll(); });
     window.addEventListener('load', function () { syncHeaderHeight(); fitInterludes(); beautyLayout(); galLayout(); onScroll(); });
     syncHeaderHeight(); frame();
 
