@@ -528,6 +528,7 @@
     }
     .email-copied-hint.visible { opacity: 1; }
 
+    .foot-mail { margin-top: 1.4rem; }
     .foot-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 2.5rem; max-width: 760px; margin-top: 3.5rem; }
     .foot-col h3 { font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sala-mute); margin-bottom: 0.9rem; }
     .foot-col a { display: block; width: fit-content; max-width: 100%; font-size: 0.92rem; line-height: 1.35; padding: 0.32rem 0; color: var(--sala-ink); transition: opacity 0.2s ease; }
@@ -719,7 +720,7 @@
     @media (max-width: 768px), (pointer: coarse) {
       .foot-col a { min-height: 44px; display: flex; align-items: center; padding: 0; }
       .to-top { width: 44px; height: 44px; }
-      .footer-email, .hs-line a { position: relative; }
+      .footer-email, .hs-line a, .bs-credit { position: relative; }
       .footer-email::before, .bs-credit::before, .hs-line a::before { content: ""; position: absolute; inset: -14px -8px; }
     }
   </style>
@@ -1442,11 +1443,6 @@
     </div>
 
     <div class="foot-inner">
-      <div class="foot-mail">
-        <a href="mailto:camilobastidasfilmmaker@gmail.com" class="footer-email" id="footer-email-link">camilobastidasfilmmaker@gmail.com</a>
-        <span class="email-copied-hint" id="email-copied-hint" aria-live="polite">Correo copiado</span>
-      </div>
-
       <div class="foot-cols">
         <nav class="foot-col" aria-label="Canales">
           <h3>Canales</h3>
@@ -1472,6 +1468,11 @@
       </div>
 
       <div class="foot-wordmark" aria-hidden="true">nocaelalluvia</div>
+
+      <div class="foot-mail">
+        <a href="mailto:camilobastidasfilmmaker@gmail.com" class="footer-email" id="footer-email-link">camilobastidasfilmmaker@gmail.com</a>
+        <span class="email-copied-hint" id="email-copied-hint" aria-live="polite">Correo copiado</span>
+      </div>
 
       <div class="foot-bottom">
         <span>Juan Camilo Bastidas — nocaelalluvia</span>
