@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -183,6 +183,9 @@
     .cat-dropdown-panel.open .cat-dropdown-link:hover { opacity: 1; }
     .cat-dropdown-panel.open .cat-dropdown-link.active { opacity: 1; }
     .cat-dropdown-link.active::before { transform: scale(1); }
+    .contact-panel.open .cat-dropdown-link { opacity: 1; }
+    .cat-dropdown-link.sm { position: relative; font-size: clamp(1.05rem, 5.1vw, 2.6rem); letter-spacing: -0.035em; }
+    .cat-dropdown-link.sm .email-copied-hint { position: absolute; left: 0; top: -1.1rem; margin: 0; font-size: 0.7rem; letter-spacing: 0; }
     html.menu-open { overflow: hidden; }
     @media (max-width: 768px) { .cat-dropdown-panel { padding: calc(var(--header-h) + 1rem) 1.25rem 3rem; } }
 
@@ -773,7 +776,10 @@
       </div>
       <span class="nav-spacer" aria-hidden="true"></span>
       <div class="nav-right">
-        <a href="#contacto" class="nav-contact-link">Contacto</a>
+        <button type="button" class="cat-dropdown-trigger nav-contact-link" id="contact-dropdown-btn" aria-expanded="false" aria-controls="contact-dropdown-panel">
+          <span>Contacto</span>
+          <span class="cat-dropdown-caret" aria-hidden="true"><svg viewBox="0 0 10 10"><path d="M1.5 3.5L5 7l3.5-3.5"/></svg></span>
+        </button>
       </div>
     </div>
   </header>
@@ -792,6 +798,15 @@
     <a href="#beauty" class="cat-dropdown-link" data-spy-target="beauty">Beauty</a>
     <a href="#esteticas" class="cat-dropdown-link" data-spy-target="esteticas">Estéticas</a>
     <a href="#social" class="cat-dropdown-link" data-spy-target="social">Social</a>
+  </nav>
+
+  <!-- CONTACTO desplegable (mismo estilo que Categorías): correo (copia con clic), teléfono, WhatsApp, Instagram y CV -->
+  <nav class="cat-dropdown-panel contact-panel" id="contact-dropdown-panel" aria-label="Contacto">
+    <a href="mailto:camilobastidasfilmmaker@gmail.com" class="cat-dropdown-link sm" id="menu-email-link">camilobastidasfilmmaker@gmail.com<span class="email-copied-hint" id="menu-copied-hint" aria-live="polite">Correo copiado</span></a>
+    <a href="tel:+573145501754" class="cat-dropdown-link">314 550 1754</a>
+    <a href="https://wa.me/573145501754" target="_blank" rel="noopener" class="cat-dropdown-link">WhatsApp</a>
+    <a href="https://www.instagram.com/nocaelalluvia/" target="_blank" rel="noopener" class="cat-dropdown-link">Instagram</a>
+    <a href="curriculum/juan-camilo-bastidas-cv.pdf" target="_blank" rel="noopener" class="cat-dropdown-link">CV</a>
   </nav>
 
   <!-- PORTADA: VANITY -->
@@ -1487,7 +1502,7 @@
 
       <div class="foot-mail">
         <a href="mailto:camilobastidasfilmmaker@gmail.com" class="footer-email" id="footer-email-link">camilobastidasfilmmaker@gmail.com</a>
-        <p class="foot-contact"><a href="tel:+573145501754">314 550 1754</a><a href="https://wa.me/573145501754" target="_blank" rel="noopener">WhatsApp</a></p>
+        <p class="foot-contact"><a href="tel:+573145501754">314 550 1754</a><a href="https://wa.me/573145501754" target="_blank" rel="noopener">WhatsApp</a><a href="curriculum/juan-camilo-bastidas-cv.pdf" target="_blank" rel="noopener">CV</a></p>
         <span class="email-copied-hint" id="email-copied-hint" aria-live="polite">Correo copiado</span>
       </div>
 
@@ -1606,9 +1621,17 @@
 
     /* ---------- 2 · Categorías ▾ + scroll-spy ---------- */
     var catBtn = $('#cat-dropdown-btn'), catPanel = $('#cat-dropdown-panel');
-    function setPanel(open) { catPanel.classList.toggle('open', open); html.classList.toggle('menu-open', open); catBtn.setAttribute('aria-expanded', String(open)); }
-    catBtn.addEventListener('click', function (e) { e.stopPropagation(); setPanel(!catPanel.classList.contains('open')); });
-    document.addEventListener('click', function (e) { if (e.target === catPanel || (!catPanel.contains(e.target) && e.target !== catBtn)) setPanel(false); });
+    var conBtn = $('#contact-dropdown-btn'), conPanel = $('#contact-dropdown-panel');
+    /* setPanel(abrir, panel): solo uno abierto a la vez; setPanel(false) cierra ambos */
+    function setPanel(open, which) {
+      [[catBtn, catPanel], [conBtn, conPanel]].forEach(function (p) { var on = !!open && p[1] === (which || catPanel); p[1].classList.toggle('open', on); p[0].setAttribute('aria-expanded', String(on)); });
+      html.classList.toggle('menu-open', !!open);
+    }
+    function anyPanel() { return catPanel.classList.contains('open') || conPanel.classList.contains('open'); }
+    catBtn.addEventListener('click', function (e) { e.stopPropagation(); setPanel(!catPanel.classList.contains('open'), catPanel); });
+    conBtn.addEventListener('click', function (e) { e.stopPropagation(); setPanel(!conPanel.classList.contains('open'), conPanel); });
+    document.addEventListener('click', function (e) { if (e.target === catPanel || e.target === conPanel || (!catPanel.contains(e.target) && !conPanel.contains(e.target) && !catBtn.contains(e.target) && !conBtn.contains(e.target))) setPanel(false); });
+    conPanel.addEventListener('click', function (e) { var a = e.target.closest('a'); if (a && a.id !== 'menu-email-link') setPanel(false); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setPanel(false); });
     var spyLinks = $$('[data-spy-target]'), spySections = $$('[data-spy-section]'), navSegs = $$('.nav-progress i');
     spyLinks.forEach(function (l) { l.addEventListener('click', function () { setPanel(false); }); });
@@ -1631,7 +1654,7 @@
     function hdrScroll() {
       var y = window.scrollY, d = y - lastY;
       html.classList.toggle('top-solid', y > 120);
-      if (catPanel.classList.contains('open') || y <= 120) { if (hdr.classList.contains('is-hidden')) showHdr(); lastY = y; return; }
+      if (anyPanel() || y <= 120) { if (hdr.classList.contains('is-hidden')) showHdr(); lastY = y; return; }
       if (Math.abs(d) < 8) return;
       if (performance.now() - lastInput > 160 && Math.abs(d) < 140) { lastY = y; return; }   // ajuste automático (imán): no cambia el encabezado
       if (d > 0) hideHdr(); else showHdr();
@@ -2195,15 +2218,18 @@
     modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
 
     /* ---------- 8 · Copiar correo con un clic ---------- */
-    var mail = $('#footer-email-link'), hint = $('#email-copied-hint');
-    mail.addEventListener('click', function (e) {
-      e.preventDefault();
-      var txt = 'camilobastidasfilmmaker@gmail.com';
-      function ok() { hint.classList.add('visible'); setTimeout(function () { hint.classList.remove('visible'); }, 2000); }
-      function fb() { var t = document.createElement('input'); t.value = txt; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); ok(); } catch (x) {} t.remove(); }
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok, fb); else fb();
+    [['#footer-email-link', '#email-copied-hint'], ['#menu-email-link', '#menu-copied-hint']].forEach(function (pair) {
+      var mail = $(pair[0]), hint = $(pair[1]);
+      mail.addEventListener('click', function (e) {
+        e.preventDefault();
+        var txt = 'camilobastidasfilmmaker@gmail.com';
+        function ok() { hint.classList.add('visible'); setTimeout(function () { hint.classList.remove('visible'); }, 2000); }
+        function fb() { var t = document.createElement('input'); t.value = txt; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); ok(); } catch (x) {} t.remove(); }
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok, fb); else fb();
+      });
     });
   })();
   </script>
 </body>
 </html>
+
