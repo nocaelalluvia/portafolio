@@ -463,10 +463,10 @@
     .beauty-track { position: relative; }
     .beauty-stage { position: relative; display: flex; flex-direction: column; padding: 0.9rem 0 0.4rem; }
     .bs-title { position: absolute; left: 2rem; top: 0; font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); pointer-events: none; }
-    .beauty-strip { position: static; order: 0; display: flex; align-items: center; gap: 12px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-padding-left: 2rem; padding: 0 2rem; scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; }
+    .beauty-strip { position: static; order: 0; display: flex; align-items: center; gap: 12px; overflow-x: auto; overflow-y: hidden; padding: 0 2rem; scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; }
     .beauty-strip::-webkit-scrollbar { display: none; }
     .beauty-strip.dragging { cursor: grabbing; scroll-snap-type: none; }
-    .b-tile { position: relative; flex: 0 0 auto; scroll-snap-align: start; background: #e9e6df; overflow: hidden; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .b-tile { position: relative; flex: 0 0 auto; background: #e9e6df; overflow: hidden; cursor: pointer; -webkit-tap-highlight-color: transparent; }
     .b-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease-snap); -webkit-user-drag: none; user-select: none; }
     @media (hover: hover) { .b-tile:hover img { transform: scale(1.025); } }
     .b-tile video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
@@ -654,10 +654,10 @@
     .hs-line a { color: var(--ink); text-transform: none; letter-spacing: 0.04em; }
     .hs-section .hs-line:not(.hs-first) { margin-top: 2.4rem; }
     .hs-line a:hover { opacity: 0.55; }
-    .hscroll { display: flex; gap: 0.5rem; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; padding: 0 2rem; scroll-padding: 0 2rem; scrollbar-width: none; overscroll-behavior-x: contain; align-items: center; }
+    .hscroll { display: flex; gap: 0.5rem; overflow-x: auto; overflow-y: hidden; padding: 0 2rem; scrollbar-width: none; overscroll-behavior-x: contain; align-items: center; }
     .hscroll::-webkit-scrollbar { display: none; }
     .hs-second { margin-top: 1rem; }
-    .hs-i { position: relative; flex: 0 0 auto; height: min(76vh, 640px); max-width: 90vw; aspect-ratio: var(--ar, 0.8); scroll-snap-align: start; background: #e9e6df; overflow: hidden; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .hs-i { position: relative; flex: 0 0 auto; height: min(76vh, 640px); max-width: 90vw; aspect-ratio: var(--ar, 0.8); background: #e9e6df; overflow: hidden; cursor: pointer; -webkit-tap-highlight-color: transparent; }
     .hs-i img, .hs-i video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .hs-i video { pointer-events: none; }
     .hscroll { cursor: grab; } .hscroll.dragging { cursor: grabbing; } .hs-i img { -webkit-user-drag: none; user-select: none; }
@@ -722,11 +722,7 @@
     .beauty-stage .bs-title, #domino .hs-title { position: static; order: -1; width: auto; height: auto; margin: 0 2rem 0.6rem; padding: 0; overflow: visible; clip: auto; white-space: normal; font-family: var(--font-mono); font-size: 0.62rem; font-weight: 400; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
     #domino .hs-title { margin-bottom: 0.7rem; padding: 0 2rem; }
     @media (max-width: 768px) { .beauty-stage .bs-title { margin-left: 1.25rem; margin-right: 1.25rem; } #domino .hs-title { padding: 0 1.25rem; } }
-    /* IMANES (asistencia al soltar el gesto): tarjetas de una en una, página que se acomoda al inicio de cada categoría (suave: "proximity"), galería que se ajusta (JS) */
-    html { scroll-snap-type: y proximity; scroll-padding-top: var(--header-h, 58px); }
-    html.no-snap, html.modal-open, html.menu-open, html.is-loading { scroll-snap-type: none; }
-    .interlude { scroll-snap-align: start; }
-    .b-tile, .hs-i { scroll-snap-stop: always; }
+    /* Sin imanes (decisión 2026-11-23): todo queda exactamente donde la persona suelta el dedo */
     /* Áreas táctiles ≥ 44 px en móvil (sin cambiar el diseño: los enlaces pequeños amplían su zona de toque con un pseudo-elemento) */
     @media (max-width: 768px), (pointer: coarse) {
       .foot-col a { min-height: 44px; display: flex; align-items: center; padding: 0; }
@@ -1811,7 +1807,7 @@
       });
       function end(e) {
         var p = pts[e.pointerId]; if (!p) return; delete pts[e.pointerId];
-        if (pinch && ids().length < 2) { pinch = null; var k = ids(); if (k.length) { var q = pts[k[0]]; q.sx = q.x; q.sy = q.y; if (G.s > 1.02) drag = { x: q.x, y: q.y, tx: G.tx, ty: G.ty }; } if (G.s < 1.05 && G.s !== 1) { G.s = 1; galApply(true); } }
+        if (pinch && ids().length < 2) { pinch = null; var k = ids(); if (k.length) { var q = pts[k[0]]; q.sx = q.x; q.sy = q.y; if (G.s > 1.02) drag = { x: q.x, y: q.y, tx: G.tx, ty: G.ty }; } }
         if (!ids().length) { drag = null; panning = false; galWorld.classList.remove('panning'); }
         // toque (sin mover): un toque abre la foto en el visor; dos toques acercan a esa foto o vuelven a la vista general
         if (e.type === 'pointerup' && !moved2 && !pinch && p.fig && performance.now() - p.t < 500) {
@@ -1832,6 +1828,7 @@
       // imán: al soltar (sin dedos) y tras un instante, la vista se acomoda sola
       var snapTimer = null;
       function galSnap() {
+        return;   // sin imán: la galería queda donde se suelta
         if (pinch || drag || ids().length) return;
         if (G.s < 1.25) { if (G.s !== 1) { G.s = 1; galApply(true); } return; }
         if (G.cw * G.s < G.W * 0.42) return;   // aún hay varias fotos a la vista: se deja libre
